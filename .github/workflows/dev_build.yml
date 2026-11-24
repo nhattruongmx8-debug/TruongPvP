@@ -30,5 +30,12 @@ jobs:
           tag_name: snapshot
           name: Dev Build
           prerelease: true
-          files: |
+          files: |      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TruongPvP-jar
+          path: |
+            ./build/libs/*.jar
+            **/build/libs/*.jar
+            
             ./build/libs/*.jar
