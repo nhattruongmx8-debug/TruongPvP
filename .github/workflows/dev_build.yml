@@ -6,13 +6,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: unzip -o truongbakhi-addon-project.zip
+      - name: Fix FarFreecam
+        run: |
+          python3 - <<'EOF'
+          p = 'truongbakhi-addon/src/main/java/com/truongbakhi/addon/modules/FarFreecam.java'
+          s = open(p).read()
+          s = s.replace('Vec3d cam = mc.gameRenderer.getCamera().getPos();', 'double dx = fc.pos.x - mc.player.getX(); double dy = fc.pos.y - mc.player.getY(); double dz = fc.pos.z - mc.player.getZ();')
+          s = s.replace('double dist = cam.distanceTo(mc.player.getPos());', 'double dist = Math.sqrt(dx*dx + dy*dy + dz*dz);')
+          open(p, 'w').write(s)
+          EOF
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
         with:
-                gradle-version: 9.2.0
+          gradle-version: 9.2.0
       - run: gradle build -p truongbakhi-addon
       - uses: actions/upload-artifact@v4
         with:
